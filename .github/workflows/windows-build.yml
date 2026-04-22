@@ -1,0 +1,21 @@
+name: 打包我的Windows工具
+
+on: [push] # 只要你把代码上传到GitHub，它就自动开始工作
+
+jobs:
+  build:
+    runs-on: windows-latest # 租用一台微软的Windows服务器
+    steps:
+      - uses: actions/checkout@v4 # 第一步：把你的代码下载到这台服务器上
+      - uses: actions/setup-python@v5 # 第二步：给服务器装上Python
+        with:
+          python-version: '3.10'
+      - name: 安装运行环境 # 第三步：按照清单购买零件
+        run: pip install -r requirements.txt
+      - name: 开始组装打包 # 第四步：执行打包命令
+        run: pyinstaller --noconsole --clean --add-data "rf_model.pkl;." --hidden-import sklearn --hidden-import sklearn.ensemble main.py
+      - name: 导出成品 # 第五步：把做好的成品放出来
+        uses: actions/upload-artifact@v4
+        with:
+          name: My-Windows-App # 这是你最后下载的压缩包名字
+          path: dist/main/ # 告诉GitHub成品在哪个文件夹里
